@@ -1,7 +1,9 @@
 # Created by .ignore support plugin (hsz.mobi)
 .DS_Store
+.idea
 .idea/.gitignore
 .idea/frontend-performance.iml
 .idea/misc.xml
 .idea/modules.xml
 website/node_modules
+sdk/node_modules
