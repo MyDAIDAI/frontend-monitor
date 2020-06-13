@@ -81,3 +81,44 @@ timing: PerformanceTiming
     unloadEventEnd: 1592043219076
     unloadEventStart: 1592043219076
 ```
+根据上面的时间计算出我们想要的时间差值
+```js
+let data = {
+    prevPage: p.fetchStart - p.navigationStart, // 上一个页面的时间
+    redirect: p.redirectEnd - p.redirectStart, // 重定向时间
+    dns: p.domainLookupEnd - p.domainLookupStart, //DNS查询时间
+    tcp: p.connectEnd - p.connectStart, // tcp连接时间
+    network: p.connectEnd - p.navigationStart, // 网络总耗时
+    // 网络接收时间
+    send: p.responseStart - p.requestStart, // 数据从发送到接收的时间
+    receive: p.responseEnd - p.responseStart, // 接收数据时间
+    request: p.responseEnd - p.requestStart, // 请求页面总耗时
+    // 前端渲染总耗时
+    dom: p.domComplete - p.domLoading, //dom解析时间
+    loadEvent: p.loadEventEnd - p.loadEventStart, // load事件执行时间
+    frontend: p.loadEventEnd - p.domLoading, // 前端渲染总时间
+    //
+    load: p.loadEventEnd - p.navigationStart, // 页面完全加载的时间
+    domReady: p.domContentLoadedEventStart - p.navigationStart, // DOM准备时间
+    interactive: p.domInteractive - p.navigationStart, // DOM可交互时间
+    ttfb: p.responseStart - p.navigationStart, // 首字节时间
+}
+```
+在页面的相应事件的回调中拿到计算结果
+```js
+    window.addEventListener('DOMContentLoaded', () => {
+      // let perfData = Util.getPerfData(performance.timing) 计算结果出错
+      setTimeout(() => {
+        let perfData = Util.getPerfData(performance.timing)
+      }, 100)
+    })
+
+    window.addEventListener('load', () => {
+      // let perfData = Util.getPerfData(performance.timing) 计算结果出错
+      setTimeout(() => {
+        let perfData = Util.getPerfData(performance.timing)
+      }, 200)
+    })
+  
+```
+上面在相应的事件中计算结果，如果不使用`setTimeout`会出现计算错误，原因是因为计算中会需要用到相应事件完成之后的时间，而当前在事件中，所以值为`0`， 导致最后计算结果为负数
